@@ -10,7 +10,9 @@ import { rendererConfig } from './webpack.renderer.config';
 import dotenv from "dotenv"
 dotenv.config()
 const config: ForgeConfig = {
-  packagerConfig: {},
+  packagerConfig: {
+    osxSign:true
+  },
   publishers: [
     {
       name: "@electron-forge/publisher-github",

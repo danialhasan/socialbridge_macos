@@ -36,27 +36,31 @@ const createWindow = (): void => {
   });
   mainWindow.webContents.on('did-finish-load', () => {
     // Only run the code below if the actionButtons element has loaded in
-    console.log('finished loading!');
     // const code = JSON.stringify(injectButton())
-    const code = `
-    console.log(
-      'Hello!!!'
-    )
-      setTimeout(()=>{
-const actionButtonContainer = document.querySelector('.notion-topbar-action-buttons')
-const newButton = document.createElement('div');
-newButton.appendChild(document.createTextNode("Activate SocialBridge"))
-console.log(actionButtonContainer)
-actionButtonContainer.appendChild(newButton)
-      },4000)
-    `;
+    // const code = `
+    // `;
     // console.log(code)
     // mainWindow.webContents.executeJavaScript(code)
-    mainWindow.webContents.executeJavaScript(`
+    const stringifiedFn = injectButton.toString().replace(/\n/g, ' ');
+    const executeScript1 = `
     const script = document.createElement("script")
-    script.innerHTML = ${code} 
+    script.id = "SocialBridge_Script"
     document.head.appendChild(script)
-  `);
+    `;
+    const executeScript2 = `document.getElementById('SocialBridge_Script').innerHTML = "${stringifiedFn} injectButton()"`;
+    console.log('<----------------------->');
+    console.log(executeScript1);
+    console.log('<------------->');
+    console.log(executeScript2);
+    console.log('<----------------------->');
+    /**
+     * TODO:
+     * Programmatically convert injectButton() into a string, replace all line breaks with spaces for one liner, and set
+     * socialbridge script innerHTML to that one liner
+     */
+
+    mainWindow.webContents.executeJavaScript(executeScript1);
+    mainWindow.webContents.executeJavaScript(executeScript2);
   });
 };
 
