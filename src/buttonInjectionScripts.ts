@@ -17,7 +17,7 @@ export function injectButton() {
 export function injectButtonFunctionality() {
   console.log('injectButtonFunctionality script run');
   const button = document.getElementById('socialbridge_button');
-  button.append(createSettingsMenu());
+  document.body.appendChild(createSettingsMenu());
   button.addEventListener('click', () => {
     /**
      * toggle settings menu.
@@ -44,9 +44,10 @@ export function injectButtonFunctionality() {
     const menu = document.createElement('div');
     menu.id = 'socialbridge_menu';
     menu.innerHTML = localStorage.getItem('menuHTML');
-    menu.style['display'] = localStorage.getItem('showSocialBridgeMenu')
-      ? 'block'
-      : 'none';
+    menu.style['display'] =
+      localStorage.getItem('showSocialBridgeMenu') === 'true'
+        ? 'block'
+        : 'none';
     console.log(
       'Menu created, showMenuHTML: ',
       localStorage.getItem('showSocialBridgeMenu')
@@ -58,7 +59,9 @@ export function injectButtonFunctionality() {
 export function setLocalStorage() {
   const menuHTML = `
     <div
-      style='display: block; width: 200px; height: 100px; border: 1px solid red'
+      style='position:absolute; z-index: 999; 
+      width: 500px; height: 500px; border: 1px solid red;
+      top:calc(50vh - 250px); left:calc(50vw - 250px)'
     >
       <h3>SocialBridge Settings</h3>
     </div>
@@ -69,7 +72,7 @@ export function setLocalStorage() {
   The 'showSocialBridgeMenu setting toggles the menu visibility
   after the injection button is pressed.
   */
-  localStorage.setItem('showSocialBridgeMenu', 'true');
+  localStorage.setItem('showSocialBridgeMenu', 'false');
 }
 
 export function stringifyFunctions(fn: Function[]): string[] {
@@ -84,4 +87,6 @@ export function stringifyFunctions(fn: Function[]): string[] {
 export function wipeLocalStorage() {
   localStorage.removeItem('showMenuHTML');
   localStorage.removeItem('menuHTML');
+  localStorage.removeItem('testWiper');
+  console.log('Wiped localstorage of socialbridge values');
 }

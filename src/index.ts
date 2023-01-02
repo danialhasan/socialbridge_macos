@@ -24,11 +24,22 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+const [
+  strInjectionFn,
+  strButtonFunctionalityFn,
+  strSetLocalStorage,
+  strWipeLocalStorage,
+] = stringifyFunctions([
+  injectButton,
+  injectButtonFunctionality,
+  setLocalStorage,
+  wipeLocalStorage,
+]);
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     height: 600,
-    width: 1000,
+    width: 800,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -38,18 +49,20 @@ const createWindow = (): void => {
   mainWindow.loadURL('https://www.notion.so/964fc45d118b4c4c937462d101604201');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV !== 'production') {
+    mainWindow.webContents.openDevTools();
+  }
   mainWindow.webContents.on('dom-ready', () => {
     console.log('DOM ready');
   });
+  mainWindow.on('close', (event) => {
+    mainWindow.webContents.executeJavaScript(
+      strWipeLocalStorage + 'wipeLocalStorage()'
+    );
+  });
+
   mainWindow.webContents.on('did-finish-load', () => {
     // Only run the code below if the actionButtons element has loaded in
-    const [strInjectionFn, strButtonFunctionalityFn, strSetLocalStorage] =
-      stringifyFunctions([
-        injectButton,
-        injectButtonFunctionality,
-        setLocalStorage,
-      ]);
     const executeScript0 = strSetLocalStorage + 'setLocalStorage()';
     const executeScript1 = `
     const script = document.createElement("script")
