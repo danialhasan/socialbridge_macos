@@ -43,8 +43,9 @@ const createWindow = (): void => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
+    title: 'SocialBridge',
   });
-
+  console.log('DIRNAME: ', __dirname);
   // and load Notion.
   mainWindow.loadURL('https://www.notion.so/964fc45d118b4c4c937462d101604201');
 
@@ -61,9 +62,13 @@ const createWindow = (): void => {
     );
   });
 
+  /**
+   * The following code can only run once a user has signed into Notion.
+   */
   mainWindow.webContents.on('did-finish-load', () => {
     // Only run the code below if the actionButtons element has loaded in
-    const executeScript0 = strSetLocalStorage + 'setLocalStorage()';
+    console.log(strSetLocalStorage);
+    const executeScript0 = strSetLocalStorage + ' setLocalStorage()';
     const executeScript1 = `
     const script = document.createElement("script")
     script.id = "SocialBridge_Script"

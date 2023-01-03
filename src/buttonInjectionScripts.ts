@@ -4,7 +4,6 @@
  * throwing an 'unexpected end of input' error. /** These multi line comments are allowed. *\/
  */
 export function injectButton() {
-  console.log('injectButton script run');
   const actionButtonContainer = document.querySelector(
     '.notion-topbar-action-buttons'
   );

@@ -7,28 +7,34 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
-import dotenv from "dotenv"
-dotenv.config()
+import dotenv from 'dotenv';
+dotenv.config();
 const config: ForgeConfig = {
   packagerConfig: {
-    osxSign:true
+    osxSign: true,
+    icon: 'src/icons/sb_icon',
   },
   publishers: [
     {
-      name: "@electron-forge/publisher-github",
+      name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: "danialhasan",
-          name:"socialbridge_macos"
+          owner: 'danialhasan',
+          name: 'socialbridge_macos',
         },
         prerelease: false,
-        draft: true,
-        authToken:process.env.GITHUB_TOKEN,
+        draft: false,
+        authToken: process.env.GITHUB_TOKEN,
       },
-      },
+    },
   ],
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({}),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+  ],
   plugins: [
     new WebpackPlugin({
       mainConfig,
