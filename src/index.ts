@@ -89,12 +89,7 @@ const createWindow = (): void => {
       [strSetLocalStorage, strInjectionFn, strButtonFunctionalityFn].forEach(
         (fn) => {
           // execute function to get it in webpage context, then call it
-          mainWindow.webContents.executeJavaScript(fn);
-          const regex = /function[\t ]+([a-zA-Z_$][a-zA-Z_$0-9]*)/;
-          const functionName = fn.match(regex);
-          console.log('functionName: ', functionName[1]);
-
-          mainWindow.webContents.executeJavaScript(`${functionName[1]}()`);
+          mainWindow.webContents.executeJavaScript(`(${fn})()`);
         }
       );
     }, 4000);
