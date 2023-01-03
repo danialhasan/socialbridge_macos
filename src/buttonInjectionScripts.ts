@@ -9,6 +9,17 @@ export function injectButton() {
     '.notion-topbar-action-buttons'
   );
   const newButton = document.createElement('div');
+  newButton.addEventListener('mouseenter', () => {
+    /**@ts-ignore */
+    newButton.style['background-color'] = '#ddd';
+    newButton.style['color'] = '#222';
+  });
+
+  newButton.addEventListener('mouseleave', () => {
+    /**@ts-ignore */
+    newButton.style['background-color'] = '#FFF';
+    newButton.style['color'] = '#000';
+  });
   newButton.id = 'socialbridge_button';
   newButton.appendChild(document.createTextNode('Activate SocialBridge'));
   actionButtonContainer.appendChild(newButton);
@@ -43,7 +54,7 @@ export function injectButtonFunctionality() {
   function createSettingsMenu(): Element {
     const menu = document.createElement('div');
     menu.id = 'socialbridge_menu';
-    menu.innerHTML = localStorage.getItem('menuHTML');
+    menu.innerHTML = returnMenuHTML();
     menu.style['display'] =
       localStorage.getItem('showSocialBridgeMenu') === 'true'
         ? 'block'
@@ -55,22 +66,35 @@ export function injectButtonFunctionality() {
     console.log('Settings created');
     return menu;
   }
-}
-export function setLocalStorage() {
-  const menuHTML = `
+
+  function returnMenuHTML(): string {
+    const menuHTML = `
     <div
-      style='position:absolute; z-index: 999; 
-      width: 500px; height: 500px; border: 1px solid red;
-      top:calc(50vh - 250px); left:calc(50vw - 250px)'
+      style='
+        position: absolute;
+        z-index: 999;
+        width: 500px;
+        height: 500px;
+        border: 3px solid black;
+        top: calc(50vh - 250px);
+        left: calc(50vw - 250px);
+        background-color: white;
+      '
     >
-      <h3>SocialBridge Settings</h3>
+      <h3 style='
+      text-align:center;
+      '>SocialBridge Settings</h3>
+      <button>Sign in with Twitter</button>
     </div>
   `;
-  localStorage.setItem('menuHTML', menuHTML);
+    return menuHTML;
+  }
+}
+export function setLocalStorage() {
   /*  
   SB menu node isn't created until injected button is pressed.
   The 'showSocialBridgeMenu setting toggles the menu visibility
-  after the injection button is pressed.
+  after the injected button is pressed.
   */
   localStorage.setItem('showSocialBridgeMenu', 'false');
 }
@@ -86,7 +110,5 @@ export function stringifyFunctions(fn: Function[]): string[] {
 }
 export function wipeLocalStorage() {
   localStorage.removeItem('showMenuHTML');
-  localStorage.removeItem('menuHTML');
-  localStorage.removeItem('testWiper');
   console.log('Wiped localstorage of socialbridge values');
 }
