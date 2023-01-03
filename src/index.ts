@@ -7,7 +7,6 @@ import { app, BrowserWindow } from 'electron';
 import {
   injectButton,
   injectButtonFunctionality,
-  injectScript,
   setLocalStorage,
   stringifyFunctions,
   wipeLocalStorage,
@@ -86,9 +85,17 @@ const createWindow = (): void => {
       mainWindow.webContents.executeJavaScript(
         `${strSetLocalStorage}${strInjectionFn}${strButtonFunctionalityFn}`
       );
+      console.log('Logging all stringified functions:');
+      [strSetLocalStorage, strInjectionFn, strButtonFunctionalityFn].forEach(
+        (fn) => {
+          // execute function to get it in webpage context, then call it
+          mainWindow.webContents.executeJavaScript(fn);
+          const regex = /function[\t ]+([a-zA-Z_$][a-zA-Z_$0-9]*)/;
+          const functionName = fn.match(regex);
+          console.log('functionName: ', functionName[1]);
 
-      mainWindow.webContents.executeJavaScript(
-        `setLocalStorage();injectButton();injectButtonFunctionality();`
+          mainWindow.webContents.executeJavaScript(`${functionName[1]}()`);
+        }
       );
     }, 4000);
     setTimeout(() => {
