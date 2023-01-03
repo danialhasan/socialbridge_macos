@@ -22,7 +22,7 @@ const config: ForgeConfig = {
           owner: 'danialhasan',
           name: 'socialbridge_macos',
         },
-        prerelease: false,
+        prerelease: true,
         draft: false,
         authToken: process.env.GITHUB_TOKEN,
       },

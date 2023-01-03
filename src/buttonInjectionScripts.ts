@@ -23,7 +23,6 @@ export function injectButton() {
   newButton.appendChild(document.createTextNode('Activate SocialBridge'));
   actionButtonContainer.appendChild(newButton);
 }
-
 export function injectButtonFunctionality() {
   console.log('injectButtonFunctionality script run');
   const button = document.getElementById('socialbridge_button');
