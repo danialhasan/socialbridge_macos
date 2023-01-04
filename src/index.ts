@@ -3,7 +3,8 @@
 require('update-electron-app')({
   logger: require('electron-log'),
 });
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, ipcRenderer } from 'electron';
+import { renderer } from './renderer';
 import {
   injectButton,
   injectButtonFunctionality,
@@ -48,7 +49,7 @@ const createWindow = (): void => {
   });
   console.log('DIRNAME: ', __dirname);
   // and load Notion.
-  mainWindow.loadURL('https://www.notion.so/964fc45d118b4c4c937462d101604201');
+  mainWindow.loadURL('https://www.notion.so/');
 
   // Open the DevTools.
   if (process.env.NODE_ENV !== 'production') {
@@ -57,7 +58,7 @@ const createWindow = (): void => {
   mainWindow.webContents.on('dom-ready', () => {
     console.log('DOM ready');
   });
-  mainWindow.on('close', (event) => {
+  mainWindow.on('close', (e) => {
     mainWindow.webContents.executeJavaScript(
       strWipeLocalStorage + 'wipeLocalStorage()'
     );
@@ -67,39 +68,20 @@ const createWindow = (): void => {
    * The following code can only run once a user has signed into Notion.
    */
   mainWindow.webContents.on('did-finish-load', () => {
-    // Only run the code below if the actionButtons element has loaded in
-    // const executeScript0 = strSetLocalStorage + ' setLocalStorage()';
-    // const executeScript1 = `
-    // const script = document.createElement("script");
-    // script.id = "SocialBridge_Script";
-    // document.head.appendChild(script);
-    // `;
-
-    // const executeScript2 = `document.getElementById('SocialBridge_Script').innerHTML = "${strInjectionFn} ${strButtonFunctionalityFn} injectButton(); injectButtonFunctionality(); "`;
-    // console.log('<-------------->');
-    // console.log(executeScript0);
-    // console.log('<-------------->');
-    // console.log(executeScript2);
     setTimeout(() => {
-      // mainWindow.webContents.executeJavaScript(executeScript0);
       mainWindow.webContents.executeJavaScript(
         `${strSetLocalStorage}${strInjectionFn}${strButtonFunctionalityFn}`
       );
-      console.log('Logging all stringified functions:');
       [strSetLocalStorage, strInjectionFn, strButtonFunctionalityFn].forEach(
         (fn) => {
           // execute function to get it in webpage context, then call it
           mainWindow.webContents.executeJavaScript(`(${fn})()`);
         }
       );
-    }, 4000);
-    setTimeout(() => {
-      // mainWindow.webContents.executeJavaScript(executeScript1);
-      // mainWindow.webContents.executeJavaScript(executeScript2);
-    }, 4000);
+    }, timeout);
   });
 };
-
+ipcMain.on('open-auth-window', () => [console.log('AUTH WINDOW OPENED')]);
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

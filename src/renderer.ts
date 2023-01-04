@@ -25,7 +25,10 @@
  *  });
  * ```
  */
-
-import './index.css';
-
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+import { ipcRenderer } from 'electron';
+export function renderer() {
+  console.log(
+    '👋 This message is being logged by "renderer.js", included via webpack'
+  );
+  console.log(ipcRenderer);
+}

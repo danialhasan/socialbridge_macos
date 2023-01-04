@@ -27,15 +27,34 @@ export function injectButtonFunctionality() {
   console.log('injectButtonFunctionality script run');
   const button = document.getElementById('socialbridge_button');
   document.body.appendChild(createSettingsMenu());
+  try {
+    document
+      .getElementById('twitterAuthBtn')
+      .addEventListener('click', (event) => {
+        event.preventDefault();
+        console.log('ipc-renderer: ', ipcRenderer);
+        ipcRenderer.send('open-auth-window')
+        /**
+         * Twitter OAuth in electron applications involves
+         * creating another browser window through which the twitterAuthURL
+         * is opened. After granting access, the second browser window
+         * gives token info to the first browser window through IPC.
+         * The token is exposed with this approach, but it's fine because
+         * we're using the PKCE API, where a code challenge is required for a
+         * valid request.
+         */
+        console.log('Twitter auth button clicked');
+      });
+  } catch (error) {
+    console.error(error);
+  }
   button.addEventListener('click', () => {
-    /**
-     * toggle settings menu.
-     * Create settings menu elsewhere before user clicks.
-     */
     toggleSettingsMenu();
   });
 
   function toggleSettingsMenu() {
+    /**@ts-ignore */
+    const { ipcRenderer } = window.ipcRenderer;
     const settingsMenu = document.getElementById('socialbridge_menu');
     localStorage.setItem(
       'showSocialBridgeMenu',
@@ -57,15 +76,19 @@ export function injectButtonFunctionality() {
       localStorage.getItem('showSocialBridgeMenu') === 'true'
         ? 'block'
         : 'none';
-    console.log(
-      'Menu created, showMenuHTML: ',
-      localStorage.getItem('showSocialBridgeMenu')
-    );
-    console.log('Settings created');
     return menu;
   }
 
   function returnMenuHTML(): string {
+    const twitterScope = 'tweet.write';
+    const twitterRedirectURI =
+      process.env.NODE_ENV === 'production'
+        ? 'https://socialbridge-server.herokuapp.com/auth/twitter'
+        : 'http://localhost:3000/auth/twitter';
+    const twitterAuthURL = '';
+    /*    const twitterAuthURL =
+      'https://twitter.com/i/oauth2/authorize?response_type=code&client_id=eHB6X085VjFfOHRqZGwwSFlubU46MTpjaQ&redirect_uri=' +
+    twitterRedirectURI + '&scope=' + twitterScope + ''; */
     const menuHTML = `
     <div
       style='
@@ -82,7 +105,7 @@ export function injectButtonFunctionality() {
       <h3 style='
       text-align:center;
       '>SocialBridge Settings</h3>
-      <button>Sign in with Twitter</button>
+      <button><a id='twitterAuthBtn' href=${twitterAuthURL}>Sign in with Twitter</a></button>
     </div>
   `;
     return menuHTML;

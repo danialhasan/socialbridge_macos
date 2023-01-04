@@ -1,7 +1,7 @@
 {
   "name": "socialbridge-app",
   "productName": "socialbridge-app",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Manage your social media with Notion",
   "repository": {
     "type": "git",
